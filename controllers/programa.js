@@ -5,9 +5,9 @@ const ObtenerOportunidadDeMejoraPorId = require("../models/OportunidadDeMejora")
 const PlanDeMejoramiento = require("../models/PlanDeMejoramiento");
 const ActividadesDeMejora = require("../models/ActividadesDeMejora");
 const ProyeccionDeEventos = require("../models/ProyeccionDeEventos");
+const OportunidadDeMejora = require("../models/OportunidadDeMejora");
 const SubirFiles = require("../models/SubirFiles");
 const Notas = require("../models/Notas");
-
 const cloudinary = require('cloudinary').v2;
 const crypto = require('crypto');
 
