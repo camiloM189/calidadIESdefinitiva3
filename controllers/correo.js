@@ -10,8 +10,6 @@ const transporter  = require('../helpers/transporter');
 
 const ObtenerCorreo = async(req, res = response) => {
       try {
-        
-     
         const { Nombre,Comentario,Email } = req.body;
       
         const comentario = `Nombre:${Nombre}\nEmail:${Email}\n${Comentario}`

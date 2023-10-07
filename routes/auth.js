@@ -3,9 +3,14 @@
 const {Router} = require('express');
 const router = Router();
 const {check} = require('express-validator')
-const {crearUsuario,loginUsuario,revalidarToken} = require('../controllers/auth');
+const {crearUsuario,loginUsuario,revalidarToken, comprobarEmail, enviarCodigo} = require('../controllers/auth');
 const { validarCampos } = require('../middlewares/validarCampos');
 const { validarToken } = require('../middlewares/validarToken');
+
+
+router.post('/comprobarEmail',comprobarEmail);
+
+router.post('/enviarCodigo',enviarCodigo);
 
 
 router.post('/new',[
