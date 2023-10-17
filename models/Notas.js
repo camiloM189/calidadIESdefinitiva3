@@ -41,6 +41,15 @@ const Notas =  Schema({
     },
     numeroDeNotas:{
         type:Number
+    },
+    seguimiento:{
+        type:Number
+    },
+    yearSeguimiento:{
+        type:Number
+    },
+    idUniversidad:{
+        type:String
     }
 
 })

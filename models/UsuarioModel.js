@@ -15,6 +15,17 @@ const UsuarioSchema = Schema({
     password:{
         type:String,
         required:true
+    },
+    tipoDeUsuario:{
+        type:String
+
+    },
+    idUniversidad:{
+        type:String
+    },
+    nombreDeLaUniversidad:{
+        type:String
+
     }
 
 

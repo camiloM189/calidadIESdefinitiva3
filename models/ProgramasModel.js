@@ -9,6 +9,9 @@ const ProgramasSchema =  Schema({
     },
     Programa:{
         type:String
+    },
+    idUniversidad:{
+        type:String
     }
 })
 module.exports = model('Programa', ProgramasSchema);

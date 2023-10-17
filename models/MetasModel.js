@@ -54,7 +54,9 @@ const MetasModel =  Schema({
     totalNota:{
         type:Number
     },
-
+    idUniversidad:{
+        type:String
+    }
 
 
 

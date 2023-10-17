@@ -25,7 +25,10 @@ const SubirFiles =  Schema({
    },
    idProyeccionDeEventos:{
 
-   }
+   },
+   idUniversidad:{
+      type:String
+  }
 
 })
 module.exports = model('SubirFiles', SubirFiles);

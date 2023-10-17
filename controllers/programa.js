@@ -11,11 +11,16 @@ const Notas = require("../models/Notas");
 const cloudinary = require('cloudinary').v2;
 const crypto = require('crypto');
 
+const Usuario = require('../models/UsuarioModel');
+const UniversidadModel = require("../models/UniversidadModel");
+
 
  const obtenerPrograma = async(req,res = response) => {
-
+    const {idUniversidad} = req.body;
     const uidUsuario = req.uid;
-    const programa = await Programa.find({ uidUsuario: uidUsuario });
+
+    const programa = await Programa.find({ idUniversidad: idUniversidad });
+ 
     try {
         if(!programa) return;
         res.json({
@@ -45,10 +50,10 @@ const obtenerProgramasId = async(req,res = response) => {
 
 const crearPrograma = async(req,res = response) => {
     try {
-        const {Programa} = req.body;
+        const {Programa,idUniversidad} = req.body;
         const usuario = req.name;
         const uidUsuario = req.uid;
-        let programa = await mongoose.model('Programa').create({Programa,usuario,uidUsuario})
+        let programa = await mongoose.model('Programa').create({Programa,usuario,uidUsuario,idUniversidad})
         res.json({
             ok: true,
             programa
@@ -247,7 +252,7 @@ const actualizarOportunidadDeMejora = async(req,res = response) => {
 try {
     const {OportunidadDeMejoraTitle,start,idPrograma,
         calidadDeContenido,idPlanDeMejoramiento,programa,idOportunidadDeMejora} = req.body;
-        console.log(req.body);
+   
 
      const usuario = req.name;
      const uidUsuario = req.uid;
@@ -408,21 +413,52 @@ const crearProyeccionDeEventos = async(req,res = response) => {
         const notasFecha5 = 0;
         const notasFecha6 = 0;
         const notasFecha7 = 0;
+        
         const {idPlanDeMejoramiento,programa,idPrograma,tituloDeActividades,
             start,idOportunidadDeMejora,indicador,
             fecha1,fecha2,fecha3,fecha4,fecha5,fecha6,fecha7,idActividadesDeMejora,
-            totalDeProyecciones
+            totalDeProyecciones,porcentajes
             } = req.body;
             const usuario = req.name;
             const uidUsuario = req.uid;
           
+            // if(porcentaje != undefined){
+            //     const  fecha1Porcentaje = (fecha1*100) / totalDeProyecciones ;
+            //     const  fecha2Porcentaje = (fecha2*100) / totalDeProyecciones ;
+            //     const  fecha3Porcentaje = (fecha3*100) / totalDeProyecciones ;
+            //     const  fecha4Porcentaje = (fecha4*100) / totalDeProyecciones ;
+            //     const  fecha5Porcentaje = (fecha5*100) / totalDeProyecciones ;
+            //     const  fecha6Porcentaje = (fecha6*100) / totalDeProyecciones ;
+            //     const  fecha7Porcentaje = (fecha7*100) / totalDeProyecciones ;
+            //     let ProyeccionDeEventos = await mongoose.model('ProyeccionDeEventos').create({tituloDeActividades,programa,
+            //      idPrograma,start,idOportunidadDeMejora,usuario,
+            //      uidUsuario,idPlanDeMejoramiento,fecha1:fecha1Porcentaje,fecha2:fecha2Porcentaje,fecha3:fecha3Porcentaje,fecha4:fecha4Porcentaje
+            //      ,fecha5:fecha5Porcentaje,fecha6:fecha6Porcentaje,fecha7:fecha7Porcentaje,idActividadesDeMejora,indicador,totalDeProyecciones,notasFecha1,
+            //      notasFecha2,notasFecha3,notasFecha4,notasFecha5,notasFecha6,notasFecha7})
+            
+            //      res.json({
+            //          ok: true,
+            //          ProyeccionDeEventos
+            //      })
 
+                // const  fecha1Porcentaje = (fecha1 / totalDeProyecciones) * 100 ;
+                // const  fecha2Porcentaje = (fecha2 / totalDeProyecciones) * 100;
+                // const  fecha3Porcentaje = (fecha3 / totalDeProyecciones) * 100;
+                // const  fecha4Porcentaje = (fecha4 / totalDeProyecciones) * 100;
+                // const  fecha5Porcentaje = (fecha5 / totalDeProyecciones) * 100;
+                // const  fecha6Porcentaje = (fecha6 / totalDeProyecciones) * 100;
+                // const  fecha7Porcentaje = (fecha7 / totalDeProyecciones) * 100;
+            //     console.log(fecha1Porcentaje,fecha2Porcentaje,
+            //         fecha3Porcentaje,fecha4Porcentaje,fecha5Porcentaje,fecha6Porcentaje,fecha7Porcentaje);
 
-            let ProyeccionDeEventos = await mongoose.model('ProyeccionDeEventos').create({tituloDeActividades,programa,
-                idPrograma,start,idOportunidadDeMejora,usuario,
-                uidUsuario,idPlanDeMejoramiento,fecha1,fecha2,fecha3,fecha4,fecha5,fecha6
-                ,fecha7,idActividadesDeMejora,indicador,totalDeProyecciones,notasFecha1,
-                notasFecha2,notasFecha3,notasFecha4,notasFecha5,notasFecha6,notasFecha7})
+            // }
+
+   
+             let ProyeccionDeEventos = await mongoose.model('ProyeccionDeEventos').create({tituloDeActividades,programa,
+                 idPrograma,start,idOportunidadDeMejora,usuario,
+                 uidUsuario,idPlanDeMejoramiento,fecha1,fecha2,fecha3,fecha4,fecha5,fecha6
+                 ,fecha7,idActividadesDeMejora,indicador,totalDeProyecciones,notasFecha1,
+                 notasFecha2,notasFecha3,notasFecha4,notasFecha5,notasFecha6,notasFecha7,porcentajes})
             
                 res.json({
                     ok: true,
@@ -494,17 +530,20 @@ const crearNotas = async(req,res = response) => {
     try {
         const {titulosDeNotas,bodyDeNotas,idPlanDeMejoramiento,programa,idPrograma,
             start,dia,mes,idOportunidadDeMejora,idActividadesDeMejora,idProyeccionDeEventos,
-            numeroDeNotas} = req.body;
+            numeroDeNotas,seguimiento,yearSeguimiento} = req.body;
             const usuario = req.name;
             const uidUsuario = req.uid;
-       
-            let CrearNotas = await mongoose.model('Notas').create({titulosDeNotas,bodyDeNotas,idPlanDeMejoramiento,programa,idPrograma,
-                start,dia,mes,idOportunidadDeMejora,idActividadesDeMejora,idProyeccionDeEventos,numeroDeNotas,usuario,uidUsuario})
-
-                res.json({
-                    ok: true,
-                    CrearNotas
+            const yearSegumientoNumber = parseInt(yearSeguimiento);
+            const SegumientoNumber = parseInt(seguimiento);
+             let CrearNotas = await mongoose.model('Notas').create({titulosDeNotas,bodyDeNotas,idPlanDeMejoramiento,programa,idPrograma,
+                 start,dia,mes,idOportunidadDeMejora,idActividadesDeMejora,idProyeccionDeEventos,numeroDeNotas,usuario,uidUsuario,
+                 yearSeguimiento:yearSegumientoNumber,seguimiento:SegumientoNumber,
                 })
+
+                 res.json({
+                     ok: true,
+                     CrearNotas
+                 })
 
     } catch (error) {
         
@@ -540,85 +579,100 @@ const agregarNotas = async (req,res = response) => {
 }
 const AgregarNotasFechas = async (req,res = response) => {
     try {
-        const {idActividadesDeMejora,notasFecha1,notasFecha2,notasFecha3,notasFecha4,notasFecha5,notasFecha6,notasFecha7,idProyeccionDeEventos} = req.body
+        const {idActividadesDeMejora,seguimiento,idProyeccionDeEventos
+            ,yearSeguimiento,fecha1,fecha2,fecha3,fecha4,fecha5,fecha6,fecha7} = req.body
         
+            
         let obtenerProyeccionDeEventos = await
         ProyeccionDeEventos.find({idActividadesDeMejora:idActividadesDeMejora});
+
+        const {notasFecha1} = obtenerProyeccionDeEventos[0];
+        const {notasFecha2} = obtenerProyeccionDeEventos[0];
+        const {notasFecha3} = obtenerProyeccionDeEventos[0];
+        const {notasFecha4} = obtenerProyeccionDeEventos[0];
+        const {notasFecha5} = obtenerProyeccionDeEventos[0];
+        const {notasFecha6} = obtenerProyeccionDeEventos[0];
+        const {notasFecha7} = obtenerProyeccionDeEventos[0];
+
         
+        const yearSegumientoNumber = parseInt(yearSeguimiento);
+        const SegumientoNumber = parseInt(seguimiento);
+     
+
+
+         if(yearSegumientoNumber === fecha1){
+     
+
+          const agregarNotaFecha1 = notasFecha1 + SegumientoNumber;
+      
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha1:agregarNotaFecha1})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+            }else if(yearSegumientoNumber === fecha2){
+
+           const agregarNotaFecha2 = notasFecha2 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha2:agregarNotaFecha2})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }else if(yearSegumientoNumber === fecha3){
+
+
+           const agregarNotaFecha3 = notasFecha3 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha3:agregarNotaFecha3})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }else if(yearSegumientoNumber === fecha4){
+
+
+           const agregarNotaFecha4 = notasFecha4 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha4:agregarNotaFecha4})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }else if(yearSegumientoNumber === fecha5){
+    
+           const agregarNotaFecha5 = notasFecha5 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha5:agregarNotaFecha5})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }else if(yearSegumientoNumber === fecha6){
     
 
-        const {notasFecha1:fecha1} = obtenerProyeccionDeEventos[0];
-        const {notasFecha2:fecha2} = obtenerProyeccionDeEventos[0];
-        const {notasFecha3:fecha3} = obtenerProyeccionDeEventos[0];
-        const {notasFecha4:fecha4} = obtenerProyeccionDeEventos[0];
-        const {notasFecha5:fecha5} = obtenerProyeccionDeEventos[0];
-        const {notasFecha6:fecha6} = obtenerProyeccionDeEventos[0];
-        const {notasFecha7:fecha7} = obtenerProyeccionDeEventos[0];
-        
+           const agregarNotaFecha6 = notasFecha6 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha6:agregarNotaFecha6})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }else if(yearSegumientoNumber === fecha7){
+ 
 
-       if(notasFecha1 != undefined){
-        const agregarNotaFecha1 = notasFecha1 + fecha1;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha1:agregarNotaFecha1})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha2 != undefined){
-        const agregarNotaFecha2 = notasFecha2 + fecha2;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha2:agregarNotaFecha2})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha3 != undefined){
-        const agregarNotaFecha3 = notasFecha3 + fecha3;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha3:agregarNotaFecha3})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha4 != undefined){
-        const agregarNotaFecha4 = notasFecha4 + fecha4;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha4:agregarNotaFecha4})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha5 != undefined){
-        const agregarNotaFecha5 = notasFecha5 + fecha5;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha5:agregarNotaFecha5})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha6 != undefined){
-        const agregarNotaFecha6 = notasFecha6 + fecha6;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha6:agregarNotaFecha6})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }else if(notasFecha7 != undefined){
-        const agregarNotaFecha7 = notasFecha7 + fecha7;
-        let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-            {notasFecha7:agregarNotaFecha7})
-            res.json({
-                     ok: true,
-                     AgregarFechas
-                 })
-       }
+           const agregarNotaFecha7 = notasFecha7 + SegumientoNumber;
+           let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+               {notasFecha7:agregarNotaFecha7})
+               res.json({
+                        ok: true,
+                        AgregarFechas
+                    })
+          }
 
-    //  let AgregarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},{notasFecha1:notasFecha1,notasFecha2:notasFecha2,notasFecha3:notasFecha3,notasFecha4:notasFecha4,notasFecha5:notasFecha5,notasFecha6:notasFecha6,notasFecha7:notasFecha7})
-    //  res.json({
-    //     ok: true,
-    //     AgregarFechas
-    // })
+
+     
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -631,78 +685,178 @@ const AgregarNotasFechas = async (req,res = response) => {
 }
 const quitarNotasFechas = async(req, res = response) => {
     try {
-        const {idActividadesDeMejora,notasFecha1,notasFecha2,notasFecha3,notasFecha4,notasFecha5,notasFecha6,notasFecha7,idProyeccionDeEventos} = req.body
-        let obtenerProyeccionDeEventos = await
-        ProyeccionDeEventos.find({idActividadesDeMejora:idActividadesDeMejora});
-        
-        const {notasFecha1:fecha1} = obtenerProyeccionDeEventos[0];
-        const {notasFecha2:fecha2} = obtenerProyeccionDeEventos[0];
-        const {notasFecha3:fecha3} = obtenerProyeccionDeEventos[0];
-        const {notasFecha4:fecha4} = obtenerProyeccionDeEventos[0];
-        const {notasFecha5:fecha5} = obtenerProyeccionDeEventos[0];
-        const {notasFecha6:fecha6} = obtenerProyeccionDeEventos[0];
-        const {notasFecha7:fecha7} = obtenerProyeccionDeEventos[0];
-        console.log(fecha1);
-        console.log(obtenerProyeccionDeEventos);
+        const {idActividadesDeMejora,idProyeccionDeEventos,SegumientoNumber,yearSegumientoNumber,idNota} = req.body
+        let obtenerProyeccionDeEventos = await ProyeccionDeEventos.find({idActividadesDeMejora:idActividadesDeMejora});
+       
+        const {notasFecha1,notasFecha2,notasFecha3,notasFecha4,
+            notasFecha5,notasFecha6,notasFecha7,start} = obtenerProyeccionDeEventos[0];
+      
+
+        const fecha1 = start;
+        const fecha2 = start + 1;
+        const fecha3 = start + 2;
+        const fecha4 = start + 3;
+        const fecha5 = start + 4;
+        const fecha6 = start + 5;
+        const fecha7 = start + 6;
+
+       
+        const fechaNumber1 = parseInt(fecha1);
+        const fechaNumber2 = parseInt(fecha2);
+        const fechaNumber3 = parseInt(fecha3);
+        const fechaNumber4 = parseInt(fecha4);
+        const fechaNumber5 = parseInt(fecha5);
+        const fechaNumber6 = parseInt(fecha6);
+        const fechaNumber7 = parseInt(fecha7);
+    
 
         
+
+
+         if(yearSegumientoNumber === fecha1){
+        
+             let borrarFecha1 = notasFecha1 - SegumientoNumber
+      
+            if(borrarFecha1 < 0){
+                let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                    {notasFecha1:0})
+                    res.json({
+                        ok: true,
+                        borrarFechas,
+                        borrarFecha1
+                    })
+            }else{
+                let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                    {notasFecha1:borrarFecha1})
    
-         if(notasFecha1 != undefined){
-             let borrarFecha1 = fecha1 - notasFecha1 ;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha1:borrarFecha1})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha2 != undefined){
-                let borrarFecha2 = fecha2 - notasFecha2;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha2:borrarFecha2})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha3 != undefined){
-                let borrarFecha3 = fecha3 - notasFecha3;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha3:borrarFecha3})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha4 != undefined){
-                let borrarFecha4 = fecha4 - notasFecha4;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha4:borrarFecha4})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha5 != undefined){
-                let borrarFecha5 = fecha5 - notasFecha5;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha5:borrarFecha5})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha6 != undefined){
-                let borrarFecha6 = fecha6 - notasFecha6;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha6:borrarFecha6})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
-            }else if(notasFecha7 != undefined){
-                let borrarFecha7 = fecha7 - notasFecha7;
-             let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
-                 {notasFecha7:borrarFecha7})
-                 res.json({
-                          ok: true,
-                          borrarFechas
-                      })
+                    res.json({
+                             ok: true,
+                             borrarFechas,
+                             borrarFecha1
+                         })
+            }
+            }else if(yearSegumientoNumber === fecha2){
+                let borrarFecha2 = notasFecha2 - SegumientoNumber;
+                if(borrarFecha2 < 0){
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha2:0})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha2
+                             })
+                }else{
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha2:borrarFecha2})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha2
+                             })
+                }
+             
+            }else if(yearSegumientoNumber  === fecha3){
+                let borrarFecha3 =  notasFecha3 - SegumientoNumber;
+          
+                if(borrarFecha3 < 0){
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha3:0})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha3
+                             })
+                }else{
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha3:borrarFecha3})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha3
+                             })
+                }
+            }else if(yearSegumientoNumber  === fecha4){
+                let borrarFecha4 = notasFecha4 - SegumientoNumber;
+                if(borrarFecha4 < 0){
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha4:0})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha4
+                             })
+                }else{
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha4:borrarFecha4})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha4
+
+                             })
+                }
+            }else if(yearSegumientoNumber  === fecha5){
+                let borrarFecha5 = notasFecha5 - SegumientoNumber;
+                if(borrarFecha5 < 0){
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha5:0})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha5
+                             })
+                }else{
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha5:borrarFecha5})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha5
+
+                             })
+                }
+            }else if(yearSegumientoNumber  === fecha6){
+                let borrarFecha6 = notasFecha6 - SegumientoNumber;
+              
+                if(borrarFecha6 < 0){
+                let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                    {notasFecha6:0})
+                res.json({
+                         ok: true,
+                         borrarFechas,
+                         borrarFecha6
+                     })
+                }else{
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha6:borrarFecha6})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha6
+                             })
+                }
+
+
+            }else if(yearSegumientoNumber  === fecha7){
+                let borrarFecha7 = notasFecha7 - SegumientoNumber;
+                if(borrarFecha7 < 0){
+                    let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                        {notasFecha7:0})
+                        res.json({
+                                 ok: true,
+                                 borrarFechas,
+                                 borrarFecha7
+                             })
+                    }else{
+                        let borrarFechas = await mongoose.model('ProyeccionDeEventos').findByIdAndUpdate({_id:idProyeccionDeEventos},
+                            {notasFecha7:borrarFecha7})
+                            res.json({
+                                     ok: true,
+                                     borrarFechas,
+                                     borrarFecha7
+
+                                 })
+                    }     
             }
 
     } catch (error) {
@@ -806,6 +960,7 @@ const uploadFiles = async (req, res = response) => {
     const signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
     const CloudUrl = 'https://api.cloudinary.com/v1_1/dpag6j5r8/upload';
     const cloud_name = 'dpag6j5r8';
+
     try {
 
     //    public_id: req.file.originalname
@@ -827,7 +982,11 @@ const uploadFiles = async (req, res = response) => {
      })
        
     } catch (error) {
-      console.log(error);
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo subir el archivo'
+        })
     }
 };
 const saveFiles = async(req,res = response) => {
@@ -1029,6 +1188,105 @@ const borrarActividadDeMejora = async(req,res = response) => {
     }
 
 }
+const crearUniversidad = async(req,res = response) => {
+    try {
+        const {nombreDeLaUniversidad} = req.body;
+        
+  
+        let crearUniversidad = await mongoose.model('Universidades').create({nombreDeLaUniversidad})
+    
+        res.json({
+            ok:true,
+            crearUniversidad
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo crear la Universidad'
+        })
+        
+
+
+    }
+}
+const agregarUsuarioUniversidad = async(req,res = response) => {
+    try {
+    const {idUniversidad,uidUsuario} = req.body;
+
+    let Universidad = await mongoose.model('Universidades').findOne({_id:idUniversidad});
+
+    const {nombreDeLaUniversidad} = Universidad;
+    if(!Universidad){
+        return res.status(400).json({
+            ok:false,
+            msg:'Codigo incorrecto o la universidad no existe'
+        });
+    }
+
+    const UsuarioUniversidad = await Usuario.findOneAndUpdate({ _id: uidUsuario },{idUniversidad,nombreDeLaUniversidad});
+        
+    res.json({
+        ok:true,
+        UsuarioUniversidad
+    })
+
+        
+    } catch (error) {
+        
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo agregar el usuario a la Universidad'
+        })
+
+    }
+
+
+
+
+}
+const obtenerTodasUniversidades = async(req,res = response) => {
+    try {
+   
+        let Universidad = await UniversidadModel.find();
+       
+        res.json({
+            ok:true,
+            Universidad
+        })
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo obtener las Universidades'
+        })
+
+    }
+
+}
+const obtenerUsuarios = async(req,res = response) => {
+    try {
+   
+        let Usuarios = await Usuario.find();
+       
+        res.json({
+            ok:true,
+            Usuarios
+        })
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo obtener los Usuarios'
+        })
+
+    }
+
+}
+
 
 
 module.exports = {obtenerPrograma,crearPrograma,crearOportunidadDeMejora,
@@ -1040,5 +1298,6 @@ module.exports = {obtenerPrograma,crearPrograma,crearOportunidadDeMejora,
     saveFiles,obtenerFiles,deleteProyeccionDeEventos,borrarFileDeCloudinary,borrarSubirFiles,
     borrarUnFile,actualizarUnaActividadDeMejoras,obtenerFilesConProyeccionDeEventos,
     obtenerFilesConIdActividadesDeMejora,borrarActividadDeMejora,obtenerFilesIdOportunidadDeMejora,obtenerFilesIdPlanDeMejoramiento,
-    obtenerFilesIdPrograma,agregarNotas,AgregarNotasFechas,quitarNotasFechas
+    obtenerFilesIdPrograma,agregarNotas,AgregarNotasFechas,quitarNotasFechas,
+    crearUniversidad,agregarUsuarioUniversidad,obtenerTodasUniversidades,obtenerUsuarios
 }

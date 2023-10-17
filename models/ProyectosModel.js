@@ -11,4 +11,7 @@ const ProyectosModel = Schema({
     pogramas:{
         type:String,
     },
+    idUniversidad:{
+        type:String
+    }
 })

@@ -25,6 +25,9 @@ const ActividadesDeMejora =  Schema({
     },
     idOportunidadDeMejora:{
         type:String
+    },
+    idUniversidad:{
+        type:String
     }
 
 })

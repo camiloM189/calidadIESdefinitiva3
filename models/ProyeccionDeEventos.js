@@ -89,6 +89,13 @@ const ProyeccionDeEventos =  Schema({
     },
     totalDeNotas:{
         type:Number
+    },
+    porcentajes:{
+        type:String
+
+    },
+    idUniversidad:{
+        type:String
     }
 
 })

@@ -9,6 +9,7 @@ const transporter = require('../helpers/transporter');
 
 
 
+
 const comprobarEmail = async(req,res = response) => {
     try {
         const {email} = req.body;
@@ -32,9 +33,6 @@ const comprobarEmail = async(req,res = response) => {
           catch (error) {
         
           }
-
-        // Verificar si el usuario ya existe en la base de datos 
-        // Generar un código único
       
 }
 const enviarCodigo = async(req,res = response) => {
@@ -73,11 +71,15 @@ const crearUsuario = async(req,res = response) => {
           const salt = bcrypt.genSaltSync();
           usuario.password = bcrypt.hashSync(password,salt);
           await usuario.save();
-          const token = await generarJWT(usuario.id,usuario.name);
+          
+          const token = await generarJWT(usuario.id,usuario.name,usuario.idUniversidad);
         res.status(201).json({
             ok:true,
             uid:usuario.id,
             name:usuario.name,
+            idUniversidad:usuario.idUniversidad,
+            tipoDeUsuario:usuario.tipoDeUsuario,
+
             token
 
         })
@@ -93,7 +95,7 @@ const loginUsuario = async(req,res = response) => {
    
     try {
         let usuario = await mongoose.model('Usuario').findOne({email})
-        // const usuario = await Usuario.findOne({email});
+      
         if(!usuario){
             return res.status(400).json({
                 ok:false,
@@ -107,13 +109,15 @@ const loginUsuario = async(req,res = response) => {
                 msg:'Credenciales Incorrectas'
             });
         }
-        const token = await generarJWT(usuario.id,usuario.name);
-        console.log(usuario);
+        const token = await generarJWT(usuario.id,usuario.name,usuario.idUniversidad);
+   
         res.json({
         ok:true,
         msg:'login',
         uid:usuario.id,
         name:usuario.name,
+        tipoDeUsuario:usuario.tipoDeUsuario,
+        idUniversidad:usuario.idUniversidad,
         token
     })  
     } catch (error) {
@@ -126,6 +130,9 @@ const loginUsuario = async(req,res = response) => {
 const revalidarToken = async(req,res = response) => {
     const uid = req.uid;
     const name = req.name;
+  
+
+
     const token = await generarJWT(uid,name);
     res.json({
         ok:true,
@@ -135,4 +142,33 @@ const revalidarToken = async(req,res = response) => {
 
     })
 }
-module.exports = {crearUsuario,loginUsuario,revalidarToken,comprobarEmail,enviarCodigo}
+const obtenerIdUniversidad = async(req,res = response) => {
+    try {
+        const {uid} = req.body;
+        let usuario = await Usuario.find({_id:uid});
+        const {idUniversidad,tipoDeUsuario} = usuario[0]
+
+        res.json({
+            ok:true,
+            idUniversidad,
+            tipoDeUsuario
+        })
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            ok:false,
+            msg:'Por Favor hable con el admin'
+        })
+    }
+   
+
+
+
+ 
+}
+
+
+
+module.exports = {crearUsuario,loginUsuario,revalidarToken,comprobarEmail,enviarCodigo,obtenerIdUniversidad}

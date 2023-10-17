@@ -8,7 +8,7 @@ const {obtenerPrograma, crearPrograma,obtenerProgramasId, obtenerOportunidadDeMe
       crearProyeccionDeEventos, obtenerProyeccionDeEventos, obtenerActividadefiltrada,
        obtenerActividadesDeMejora,actualizarOportunidadDeMejora, 
        actualizarActividadeDeOportunidadDeMejora, borrarOportunidadDeMejora, 
-       crearNotas, obtenerNotas, obtenerSetNota, actualizarNota, borrarNota, uploadFiles, saveFiles, obtenerFiles, deleteProyeccionDeEventos, borrarFileDeCloudinary, borrarSubirFiles, borrarUnFile, actualizarUnaActividadDeMejoras, obtenerFilesConProyeccionDeEventos, obtenerFilesConIdActividadesDeMejora, borrarActividadDeMejora, obtenerFilesIdOportunidadDeMejora, obtenerFilesIdPlanDeMejoramiento, obtenerFilesIdPrograma, agregarNotas, AgregarNotasFechas, quitarNotasFechas } = require('../controllers/programa');
+       crearNotas, obtenerNotas, obtenerSetNota, actualizarNota, borrarNota, uploadFiles, saveFiles, obtenerFiles, deleteProyeccionDeEventos, borrarFileDeCloudinary, borrarSubirFiles, borrarUnFile, actualizarUnaActividadDeMejoras, obtenerFilesConProyeccionDeEventos, obtenerFilesConIdActividadesDeMejora, borrarActividadDeMejora, obtenerFilesIdOportunidadDeMejora, obtenerFilesIdPlanDeMejoramiento, obtenerFilesIdPrograma, agregarNotas, AgregarNotasFechas, quitarNotasFechas, crearUniversidad, agregarUsuarioUniversidad, obtenerTodasUniversidades, obtenerUsuarios } = require('../controllers/programa');
 const { body } = require('express-validator');
 
 const upload = multer({ storage: storage });
@@ -17,7 +17,7 @@ const router = Router()
 
 router.use(validarToken)
 
-router.get('/programas',obtenerPrograma)
+router.post('/programas',obtenerPrograma)
 
 router.post('/obtenerProgramasId',obtenerProgramasId)
 
@@ -98,8 +98,13 @@ router.post('/AgregarNotasFechas',AgregarNotasFechas);
 
 router.post('/quitarNotasFechas',quitarNotasFechas);
 
+router.post('/crearUniversidad',crearUniversidad);
 
+router.post('/agregarUsuarioUniversidad',agregarUsuarioUniversidad);
 
+router.post('/obtenerTodasUniversidades',obtenerTodasUniversidades);
+
+router.post('/obtenerUsuarios',obtenerUsuarios);
 
 
 

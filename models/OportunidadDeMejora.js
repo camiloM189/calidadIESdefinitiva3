@@ -25,6 +25,9 @@ const OportunidadDeMejora =  Schema({
     },
     calidadDeContenido:{
         type:String
+    },
+    idUniversidad:{
+        type:String
     }
 
 })

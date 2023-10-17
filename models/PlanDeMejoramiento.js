@@ -17,6 +17,8 @@ const PlanDeMejoramiento =  Schema({
         type:Number,
         required:true
     },
-
+    idUniversidad:{
+        type:String
+    }
 })
 module.exports = model('PlanDeMejoramiento', PlanDeMejoramiento);
