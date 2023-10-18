@@ -8,10 +8,15 @@ const {obtenerPrograma, crearPrograma,obtenerProgramasId, obtenerOportunidadDeMe
       crearProyeccionDeEventos, obtenerProyeccionDeEventos, obtenerActividadefiltrada,
        obtenerActividadesDeMejora,actualizarOportunidadDeMejora, 
        actualizarActividadeDeOportunidadDeMejora, borrarOportunidadDeMejora, 
-       crearNotas, obtenerNotas, obtenerSetNota, actualizarNota, borrarNota, uploadFiles, saveFiles, obtenerFiles, deleteProyeccionDeEventos, borrarFileDeCloudinary, borrarSubirFiles, borrarUnFile, actualizarUnaActividadDeMejoras, obtenerFilesConProyeccionDeEventos, obtenerFilesConIdActividadesDeMejora, borrarActividadDeMejora, obtenerFilesIdOportunidadDeMejora, obtenerFilesIdPlanDeMejoramiento, obtenerFilesIdPrograma, agregarNotas, AgregarNotasFechas, quitarNotasFechas, crearUniversidad, agregarUsuarioUniversidad, obtenerTodasUniversidades, obtenerUsuarios } = require('../controllers/programa');
+       crearNotas, obtenerNotas, obtenerSetNota, actualizarNota, borrarNota, uploadFiles, saveFiles, obtenerFiles, deleteProyeccionDeEventos, borrarFileDeCloudinary, borrarSubirFiles, borrarUnFile, actualizarUnaActividadDeMejoras, obtenerFilesConProyeccionDeEventos, obtenerFilesConIdActividadesDeMejora, borrarActividadDeMejora, obtenerFilesIdOportunidadDeMejora, obtenerFilesIdPlanDeMejoramiento, obtenerFilesIdPrograma, agregarNotas, AgregarNotasFechas, quitarNotasFechas, crearUniversidad, agregarUsuarioUniversidad, obtenerTodasUniversidades, obtenerUsuarios, prueba, borrarUsuarios } = require('../controllers/programa');
 const { body } = require('express-validator');
 
+
+// const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+
+
 
 const router = Router()
 
@@ -65,7 +70,12 @@ router.delete('/borrarNota/:idNota',borrarNota)
 
 // router.post('/uploadFiles',uploadFiles)
 
-router.post('/upload',upload.single('file'),uploadFiles);
+// router.post('/upload',upload.single('file'),uploadFiles);
+
+router.post('/upload', upload.single('file'),uploadFiles);
+
+// router.post('/prueba',prueba);
+
 
 router.post('/saveFiles',saveFiles);
 
@@ -106,7 +116,7 @@ router.post('/obtenerTodasUniversidades',obtenerTodasUniversidades);
 
 router.post('/obtenerUsuarios',obtenerUsuarios);
 
-
+router.post('/borrarUsuarios',borrarUsuarios);
 
 
 

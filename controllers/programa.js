@@ -10,7 +10,7 @@ const SubirFiles = require("../models/SubirFiles");
 const Notas = require("../models/Notas");
 const cloudinary = require('cloudinary').v2;
 const crypto = require('crypto');
-
+const fs = require('fs');
 const Usuario = require('../models/UsuarioModel');
 const UniversidadModel = require("../models/UniversidadModel");
 
@@ -950,7 +950,11 @@ const borrarNota = async(req,res = response) => {
 
     
 }
+const prueba = async(req, res = response) => {
+    console.log(req.body);
 
+
+}
 const uploadFiles = async (req, res = response) => {
     const apiSecret = "YYKxZcFtFxte6TirX2gJA5ZDK_0";
     const timestamp = Math.floor(Date.now() / 1000);
@@ -960,7 +964,10 @@ const uploadFiles = async (req, res = response) => {
     const signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
     const CloudUrl = 'https://api.cloudinary.com/v1_1/dpag6j5r8/upload';
     const cloud_name = 'dpag6j5r8';
+    console.log(req.file.originalname);
 
+ 
+  
     try {
 
     //    public_id: req.file.originalname
@@ -972,6 +979,7 @@ const uploadFiles = async (req, res = response) => {
          cloud_name:cloud_name,
          resource_type: "auto",
          auto_process: false,
+         
         //  public_id: req.file.originalname
        });
 
@@ -980,7 +988,12 @@ const uploadFiles = async (req, res = response) => {
         cloudResp
         
      })
-       
+     const archivoABorrar =req.file.path;
+         fs.unlink(archivoABorrar, (err) => {
+             if (err) {
+                 console.error('Error al borrar el archivo:', err);
+               }
+             });
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -988,7 +1001,60 @@ const uploadFiles = async (req, res = response) => {
             msg: 'no se pudo subir el archivo'
         })
     }
-};
+
+
+
+
+//     const apiSecret = "YYKxZcFtFxte6TirX2gJA5ZDK_0";
+//     const timestamp = Math.floor(Date.now() / 1000);
+//     const upload_preset = 'calidadies-react'
+//     const stringToSign = `timestamp=${timestamp}&upload_preset=${upload_preset}${apiSecret}`;
+//     const api_key = '948524788193582';
+//     const signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
+//     const CloudUrl = 'https://api.cloudinary.com/v1_1/dpag6j5r8/upload';
+//     const cloud_name = 'dpag6j5r8';
+//      const archivo = req.file;
+
+//     if (!archivo) {
+//       return res.status(400).send('No se encontró ningún archivo en la solicitud.');
+//     }
+//     try {
+
+//         public_id: req.file.originalname
+//         const cloudResp = await cloudinary.uploader.upload(req.file.path, {
+//           upload_preset: upload_preset,
+//           api_key:api_key,
+//           timestamp:timestamp,
+//           signature:signature,
+//           cloud_name:cloud_name,
+//           resource_type: "auto",
+//           auto_process: false,
+//           public_id: req.file.originalname
+//         });
+
+//        res.json({
+//          ok: true,
+//          cloudResp
+        
+//       })
+      
+//       const archivoABorrar =req.file.path;
+//     fs.unlink(archivoABorrar, (err) => {
+//         if (err) {
+//             console.error('Error al borrar el archivo:', err);
+//           }
+//          });
+    
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({
+//             ok: false,
+//             msg: 'no se pudo subir el archivo'
+//         })
+    
+// }
+}
+
 const saveFiles = async(req,res = response) => {
     const {idNota,cloudResp,idPlanDeMejoramiento,idPrograma,
         idOportunidadDeMejora,idActividadesDeMejora,idProyeccionDeEventos,
@@ -1286,7 +1352,28 @@ const obtenerUsuarios = async(req,res = response) => {
     }
 
 }
+const borrarUsuarios = async(req,res = response) => {
+    const {_id} = req.body;
+    console.log(_id);
+    try {
+   
+        let Usuarios = await Usuario.findByIdAndDelete({_id});
+       
+         res.json({
+             ok:true,
+            Usuarios
+         })
 
+
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'no se pudo obtener los Usuarios'
+        })
+
+    }
+}
 
 
 module.exports = {obtenerPrograma,crearPrograma,crearOportunidadDeMejora,
@@ -1299,5 +1386,5 @@ module.exports = {obtenerPrograma,crearPrograma,crearOportunidadDeMejora,
     borrarUnFile,actualizarUnaActividadDeMejoras,obtenerFilesConProyeccionDeEventos,
     obtenerFilesConIdActividadesDeMejora,borrarActividadDeMejora,obtenerFilesIdOportunidadDeMejora,obtenerFilesIdPlanDeMejoramiento,
     obtenerFilesIdPrograma,agregarNotas,AgregarNotasFechas,quitarNotasFechas,
-    crearUniversidad,agregarUsuarioUniversidad,obtenerTodasUniversidades,obtenerUsuarios
+    crearUniversidad,agregarUsuarioUniversidad,obtenerTodasUniversidades,obtenerUsuarios,prueba,borrarUsuarios
 }
