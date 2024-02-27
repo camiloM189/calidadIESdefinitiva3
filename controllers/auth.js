@@ -38,13 +38,62 @@ const comprobarEmail = async(req,res = response) => {
 const enviarCodigo = async(req,res = response) => {
     try {
         const {email,password,name,codigo} = req.body;
-
         const mailOptions = {
             from: email,
             to: email,
             subject:`Codigo de verificacion de Calidad IES`,
-            text:`Hola ${name} El codigo de verificacion de tu cuenta de Calidad IES es :${codigo}`
-            }
+            text:`Hola ${name} El codigo de verificacion de tu cuenta de Calidad IES es :${codigo}`,
+            html:`
+            <html>
+            <head>
+                <style>
+                body {
+                    background-color: #f4f4f4;
+                }
+                p{
+                    font-size: 1.2rem;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .header {
+                    background-color: #1b2543;
+                    color: #fff;
+                    padding: 10px;
+                    border-radius: 5px 5px 0 0;
+                }
+                .content {
+                    padding: 20px;
+                }
+                .image {
+                    max-width: 100%;
+                    height: auto;
+                    display: block;
+                    margin: 20px auto;
+                }
+                </style>
+            </head>
+            <body>
+            <div class="container">
+            <div class="header">
+                <h2>Código de verificación de Calidad IES</h2>
+            </div>
+            <div class="content">
+                <p>Hola ${name}</p>
+                <p>Calidad IES ha recibido una solicitud de creación de usuario</p>
+                <p>Utiliza este código para continuar con el proceso de creación de usuario</p>
+                <p>El código de verificación de tu cuenta de Calidad IES es: ${codigo}</p>
+            </div>
+           </div>
+            </body>
+            </html>
+        `
+        }
             await transporter.sendMail(mailOptions);
          return res.status(200).json({ message: 'Correo enviado con éxito' });
        } catch (error) {
